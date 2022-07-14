@@ -96,6 +96,7 @@ func (b *farBuilder) BuildFAR() *ie.IE {
 		createFunc = ie.NewUpdateFAR
 		fwdParams = ie.NewUpdateForwardingParameters(
 			ie.NewDestinationInterface(b.dstInterface),
+			ie.NewPFCPSMReqFlags(7), // add the end marker
 		)
 	}
 
