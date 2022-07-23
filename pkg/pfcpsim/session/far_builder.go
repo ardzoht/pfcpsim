@@ -14,6 +14,7 @@ type farBuilder struct {
 	teid         uint32
 	downlinkIP   string
 	dstInterface uint8
+	endmarker    bool
 
 	zeroBasedOuterHeader bool
 	isActionSet          bool
@@ -43,6 +44,12 @@ func (b *farBuilder) WithMethod(method IEMethod) *farBuilder {
 func (b *farBuilder) WithAction(action uint8) *farBuilder {
 	b.isActionSet = true
 	b.applyAction = action
+
+	return b
+}
+
+func (b *farBuilder) WithEndMarker(endmarker bool) *farBuilder {
+	b.endmarker = true
 
 	return b
 }
@@ -94,10 +101,17 @@ func (b *farBuilder) BuildFAR() *ie.IE {
 	createFunc := ie.NewCreateFAR
 	if b.method == Update {
 		createFunc = ie.NewUpdateFAR
-		fwdParams = ie.NewUpdateForwardingParameters(
-			ie.NewDestinationInterface(b.dstInterface),
-			ie.NewPFCPSMReqFlags(7), // add the end marker
-		)
+		if b.endmarker {
+			fwdParams = ie.NewUpdateForwardingParameters(
+				ie.NewDestinationInterface(b.dstInterface),
+				ie.NewPFCPSMReqFlags(7), // add the end marker
+			)
+		} else {
+			fwdParams = ie.NewUpdateForwardingParameters(
+				ie.NewDestinationInterface(b.dstInterface),
+			)
+		}
+
 	}
 
 	if b.zeroBasedOuterHeader {
