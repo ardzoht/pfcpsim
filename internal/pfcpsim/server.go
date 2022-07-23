@@ -20,7 +20,9 @@ import (
 
 // pfcpSimService implements the Protobuf interface and keeps a connection to a remote PFCP Agent peer.
 // Its state is handled in internal/pfcpsim/state.go
-type pfcpSimService struct{}
+type pfcpSimService struct {
+	pb.UnimplementedPFCPSimServer
+}
 
 // SessionStep identifies the step in loops, used while creating/modifying/deleting sessions and rules IDs.
 // It should be high enough to avoid IDs overlap when creating sessions. 5 Applications should be enough.
@@ -223,7 +225,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithMethod(session.Create).
 				WithDstInterface(ieLib.DstInterfaceAccess).
 				WithTEID(uplinkTEID).
-                WithDownlinkIP(nodeBaddress).
+				WithDownlinkIP(nodeBaddress).
 				BuildFAR()
 
 			fars = append(fars, uplinkFAR)

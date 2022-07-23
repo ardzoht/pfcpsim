@@ -81,3 +81,8 @@ To setup pfcpsim use the same steps shown above (without executing `docker`). E.
 ./server -p 12345 --interface <interface-name>
 ```
 
+#### Update proto
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative api/pfcpsim.proto
+```
