@@ -39,8 +39,9 @@ type sessionCreate struct {
 type sessionModify struct {
 	Args struct {
 		commonArgs
-		BufferFlag   bool `short:"b" long:"buffer" description:"If set, downlink FARs will have the buffer flag set to true"`
-		NotifyCPFlag bool `short:"n" long:"notifycp" description:"If set, downlink FARs will have the notify CP flag set to true"`
+		BufferFlag    bool `short:"b" long:"buffer" description:"If set, downlink FARs will have the buffer flag set to true"`
+		NotifyCPFlag  bool `short:"n" long:"notifycp" description:"If set, downlink FARs will have the notify CP flag set to true"`
+		EndMarkerFlag bool `short:"m" long:"endmarker" description:"If set, downlink FARs will have the end marker set to true"`
 	}
 }
 
@@ -102,6 +103,7 @@ func (s *sessionModify) Execute(args []string) error {
 		BufferFlag:    s.Args.BufferFlag,
 		NotifyCPFlag:  s.Args.NotifyCPFlag,
 		AppFilters:    s.Args.AppFilterString,
+		EndMarkerFlag: s.Args.EndMarkerFlag,
 	})
 
 	if err != nil {

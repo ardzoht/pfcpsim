@@ -312,7 +312,7 @@ func (P pfcpSimService) ModifySession(ctx context.Context, request *pb.ModifySes
 			teid = 0 // When buffering, TEID = 0.
 		}
 
-		for _, _ = range request.AppFilters {
+		for range request.AppFilters {
 			downlinkFAR := session.NewFARBuilder().
 				WithID(ID). // Same FARID that was generated in create sessions
 				WithMethod(session.Update).
@@ -320,6 +320,7 @@ func (P pfcpSimService) ModifySession(ctx context.Context, request *pb.ModifySes
 				WithDstInterface(ieLib.DstInterfaceAccess).
 				WithTEID(teid).
 				WithDownlinkIP(nodeBaddress).
+				WithEndMarker(request.EndMarkerFlag).
 				BuildFAR()
 
 			newFARs = append(newFARs, downlinkFAR)

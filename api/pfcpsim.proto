@@ -27,6 +27,7 @@ message ModifySessionRequest {
   bool bufferFlag = 5;
   bool notifyCPFlag = 6;
   repeated string appFilters = 7;
+  bool endMarkerFlag = 8;
 }
 
 message ConfigureRequest {
