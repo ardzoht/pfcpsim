@@ -11,7 +11,7 @@ import (
 	"sync"
 	"syscall"
 
-	pb "github.com/omec-project/pfcpsim/api"
+	pb "github.com/ardzoht/pfcpsim/api"
 	"github.com/ardzoht/pfcpsim/internal/pfcpsim"
 	"github.com/pborman/getopt/v2"
 	log "github.com/sirupsen/logrus"
