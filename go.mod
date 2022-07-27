@@ -14,3 +14,4 @@ require (
 	google.golang.org/protobuf v1.28.0
 )
 
+replace github.com/omec-project/pfcpsim => github.com/ardzoht/pfcpsim v0.2.3
