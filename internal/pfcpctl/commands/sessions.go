@@ -7,7 +7,7 @@ import (
 	"context"
 
 	"github.com/jessevdk/go-flags"
-	pb "github.com/omec-project/pfcpsim/api"
+	pb "github.com/ardzoht/pfcpsim/api"
 	log "github.com/sirupsen/logrus"
 )
 

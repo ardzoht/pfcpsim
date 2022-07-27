@@ -4,7 +4,7 @@
 package commands
 
 import (
-	pb "github.com/omec-project/pfcpsim/api"
+	pb "github.com/ardzoht/pfcpsim/api"
 	"github.com/ardzoht/pfcpsim/internal/pfcpctl/config"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
