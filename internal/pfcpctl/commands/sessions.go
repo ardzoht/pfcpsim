@@ -18,6 +18,8 @@ type commonArgs struct {
 	GnBAddress      string   `short:"g" long:"gnb-addr" description:"The UE pool address"`
 	AppFilterString []string `short:"a" long:"app-filter" default:"ip:any:any:allow:100" description:"Specify an application filter. Format: '{ip | udp | tcp}:{IPv4 Prefix | any}:{<lower-L4-port>-<upper-L4-port> | any}:{allow | deny}:{rule-precedence}' . e.g. 'udp:10.0.0.0/8:80-88:allow:100'"`
 	QFI             uint8    `short:"q" long:"qfi" description:"The QFI value for QERs. Max value 64."`
+	UlTunnelDstIP   string   `short:"l" long:"uplink-tunnel-dst-ip" description:"Uplink tunnel destination IPv4 address"`
+	DlTunnelDstIP   string   `short:"d" long:"downlink-tunnel-dst-ip" description:"Downlink tunnel destination IPv4 address"`
 }
 
 func (a *commonArgs) validate() {
@@ -78,6 +80,8 @@ func (s *sessionCreate) Execute(args []string) error {
 		UeAddressPool: s.Args.UePool,
 		AppFilters:    s.Args.AppFilterString,
 		Qfi:           int32(s.Args.QFI),
+		UlTunnelDstIP: s.Args.UlTunnelDstIP,
+		DlTunnelDstIP: s.Args.DlTunnelDstIP,
 	})
 
 	if err != nil {

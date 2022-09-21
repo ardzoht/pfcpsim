@@ -8,11 +8,14 @@ import (
 )
 
 type farBuilder struct {
-	farID        uint32
-	applyAction  uint8
-	method       IEMethod
-	teid         uint32
-	downlinkIP   string
+	farID       uint32
+	applyAction uint8
+	method      IEMethod
+	teid        uint32
+	// downlink flow tunnel destination IP
+	downlinkIP string
+	// uplink flow tunnel destination IP
+	uplinkIP     string
 	dstInterface uint8
 	endmarker    bool
 
@@ -71,6 +74,11 @@ func (b *farBuilder) WithDownlinkIP(downlinkIP string) *farBuilder {
 	return b
 }
 
+func (b *farBuilder) WithUplinkIP(uplinkIP string) *farBuilder {
+	b.uplinkIP = uplinkIP
+	return b
+}
+
 func (b *farBuilder) validate() {
 	if b.farID == 0 {
 		panic("Tried building FAR without setting FAR ID")
@@ -119,6 +127,8 @@ func (b *farBuilder) BuildFAR() *ie.IE {
 	} else if b.downlinkIP != "" { //TODO revisit code and improve its structure
 		// TEID and DownlinkIP are provided
 		fwdParams.Add(ie.NewOuterHeaderCreation(S_TAG, b.teid, b.downlinkIP, "", 0, 0, 0))
+	} else if b.uplinkIP != "" {
+		fwdParams.Add(ie.NewOuterHeaderCreation(S_TAG, b.teid, b.uplinkIP, "", 0, 0, 0))
 	}
 
 	far := createFunc(

@@ -124,7 +124,16 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 
 	baseID := int(request.BaseID)
 	count := int(request.Count)
-	nodeBaddress := request.NodeBAddress
+
+	uplinkDstIp := request.UlTunnelDstIP
+	if uplinkDstIp == "" {
+		uplinkDstIp = "0.0.0.0"
+	}
+
+	downlinkDstIp := request.DlTunnelDstIP
+	if downlinkDstIp == "" {
+		downlinkDstIp = request.NodeBAddress
+	}
 
 	lastUEAddr, _, err := net.ParseCIDR(request.UeAddressPool)
 	if err != nil {
@@ -217,6 +226,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithAction(session.ActionForward).
 				WithDstInterface(ieLib.DstInterfaceCore).
 				WithMethod(session.Create).
+				WithUplinkIP(uplinkDstIp).
 				BuildFAR()
 
 			downlinkFAR := session.NewFARBuilder().
@@ -225,7 +235,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithMethod(session.Create).
 				WithDstInterface(ieLib.DstInterfaceAccess).
 				WithTEID(uplinkTEID).
-				WithDownlinkIP(nodeBaddress).
+				WithDownlinkIP(downlinkDstIp).
 				BuildFAR()
 
 			fars = append(fars, uplinkFAR)
