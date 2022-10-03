@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/c-robinson/iplib"
 	pb "github.com/ardzoht/pfcpsim/api"
 	"github.com/ardzoht/pfcpsim/pkg/pfcpsim"
 	"github.com/ardzoht/pfcpsim/pkg/pfcpsim/session"
+	"github.com/c-robinson/iplib"
 	log "github.com/sirupsen/logrus"
 	ieLib "github.com/wmnsk/go-pfcp/ie"
 	"google.golang.org/grpc/codes"

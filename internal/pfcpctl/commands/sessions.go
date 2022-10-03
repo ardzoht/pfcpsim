@@ -6,8 +6,8 @@ package commands
 import (
 	"context"
 
-	"github.com/jessevdk/go-flags"
 	pb "github.com/ardzoht/pfcpsim/api"
+	"github.com/jessevdk/go-flags"
 	log "github.com/sirupsen/logrus"
 )
 

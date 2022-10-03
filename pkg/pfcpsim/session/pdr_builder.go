@@ -137,9 +137,7 @@ func (b *pdrBuilder) BuildPDR() *ie.IE {
 
 	var teid *ie.IE
 	if b.teidAlloc {
-                teid = ie.NewFTEID(0x01, 0, nil, nil, 0)
-		teidVal, _ := teid.FTEID()
-		teidVal.SetChFlag()
+		teid = ie.NewFTEID(0x05, 0, nil, nil, 0)
 	} else {
 		teid = ie.NewFTEID(0x01, b.teid, net.ParseIP(b.n3Address), nil, 0)
 	}
