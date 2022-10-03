@@ -17,6 +17,7 @@ message CreateSessionRequest {
   int32 qfi = 6; // Should be uint8
   string ulTunnelDstIP = 7;
   string dlTunnelDstIP = 8;
+  bool teidAllocFlag = 9;
 }
 
 message ModifySessionRequest {
@@ -65,3 +66,4 @@ service PFCPSim {
   rpc ModifySession (ModifySessionRequest) returns (Response) {}
   rpc DeleteSession (DeleteSessionRequest) returns (Response) {}
 }
+
