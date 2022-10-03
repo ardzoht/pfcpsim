@@ -135,6 +135,8 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 		downlinkDstIp = request.NodeBAddress
 	}
 
+	teidAlloc := request.TeidAllocFlag
+
 	lastUEAddr, _, err := net.ParseCIDR(request.UeAddressPool)
 	if err != nil {
 		errMsg := fmt.Sprintf(" Could not parse Address Pool: %v", err)
@@ -203,6 +205,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithN3Address(upfN3Address).
 				WithSDFFilter(SDFFilter).
 				WithPrecedence(precedence).
+				WithTeidAlloc(teidAlloc).
 				MarkAsUplink().
 				BuildPDR()
 
@@ -215,6 +218,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				AddQERID(sessQerID).
 				AddQERID(downlinkAppQerID).
 				WithFARID(downlinkFarID).
+				WithTeidAlloc(teidAlloc).
 				MarkAsDownlink().
 				BuildPDR()
 

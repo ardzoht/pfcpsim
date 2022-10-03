@@ -16,6 +16,7 @@ type pdrBuilder struct {
 	id         uint16
 	teid       uint32
 	farID      uint32
+	teidAlloc  bool
 
 	qerIDs []*ie.IE
 
@@ -75,6 +76,11 @@ func (b *pdrBuilder) WithFARID(farID uint32) *pdrBuilder {
 	return b
 }
 
+func (b *pdrBuilder) WithTeidAlloc(teidAlloc bool) *pdrBuilder {
+	b.teidAlloc = teidAlloc
+	return b
+}
+
 func (b *pdrBuilder) MarkAsDownlink() *pdrBuilder {
 	b.direction = downlink
 	return b
@@ -129,6 +135,15 @@ func (b *pdrBuilder) BuildPDR() *ie.IE {
 		createFunc = ie.NewUpdatePDR
 	}
 
+	var teid *ie.IE
+	if b.teidAlloc {
+                teid = ie.NewFTEID(0x01, 0, nil, nil, 0)
+		teidVal, _ := teid.FTEID()
+		teidVal.SetChFlag()
+	} else {
+		teid = ie.NewFTEID(0x01, b.teid, net.ParseIP(b.n3Address), nil, 0)
+	}
+
 	if b.direction == downlink {
 		pdi := ie.NewPDI(
 			ie.NewSourceInterface(ie.SrcInterfaceCore),
@@ -158,7 +173,7 @@ func (b *pdrBuilder) BuildPDR() *ie.IE {
 	// UplinkPDR
 	pdi := ie.NewPDI(
 		ie.NewSourceInterface(ie.SrcInterfaceAccess),
-		ie.NewFTEID(0x01, b.teid, net.ParseIP(b.n3Address), nil, 0),
+		teid,
 	)
 
 	if b.sdfFilter != "" {

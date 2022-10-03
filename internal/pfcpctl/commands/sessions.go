@@ -20,6 +20,7 @@ type commonArgs struct {
 	QFI             uint8    `short:"q" long:"qfi" description:"The QFI value for QERs. Max value 64."`
 	UlTunnelDstIP   string   `short:"l" long:"uplink-tunnel-dst-ip" description:"Uplink tunnel destination IPv4 address"`
 	DlTunnelDstIP   string   `short:"d" long:"downlink-tunnel-dst-ip" description:"Downlink tunnel destination IPv4 address"`
+	TeidAllocFlag   bool     `short:"t" long:"teid-alloc" description:"If set, ask UP for teid allocation on PDRsd"`
 }
 
 func (a *commonArgs) validate() {
@@ -82,6 +83,7 @@ func (s *sessionCreate) Execute(args []string) error {
 		Qfi:           int32(s.Args.QFI),
 		UlTunnelDstIP: s.Args.UlTunnelDstIP,
 		DlTunnelDstIP: s.Args.DlTunnelDstIP,
+		TeidAllocFlag: s.Args.TeidAllocFlag,
 	})
 
 	if err != nil {
