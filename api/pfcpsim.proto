@@ -18,6 +18,7 @@ message CreateSessionRequest {
   string ulTunnelDstIP = 7;
   string dlTunnelDstIP = 8;
   bool teidAllocFlag = 9;
+  bool bidirectionalSDFFlag = 10;
 }
 
 message ModifySessionRequest {
