@@ -17,6 +17,7 @@ type pdrBuilder struct {
 	teid       uint32
 	farID      uint32
 	teidAlloc  bool
+	bidSdf     bool
 
 	qerIDs []*ie.IE
 
@@ -36,8 +37,9 @@ func (b *pdrBuilder) WithPrecedence(precedence uint32) *pdrBuilder {
 	return b
 }
 
-func (b *pdrBuilder) WithSDFFilter(filter string) *pdrBuilder {
+func (b *pdrBuilder) WithSDFFilter(filter string, bidSdf bool) *pdrBuilder {
 	b.sdfFilter = filter
+	b.bidSdf = bidSdf
 	return b
 }
 
@@ -149,7 +151,11 @@ func (b *pdrBuilder) BuildPDR() *ie.IE {
 		)
 
 		if b.sdfFilter != "" {
-			pdi.Add(ie.NewSDFFilter(b.sdfFilter, "", "", "", 1))
+			if !b.bidSdf {
+				pdi.Add(ie.NewSDFFilter(b.sdfFilter, "", "", "", 1))
+			} else {
+				pdi.Add(ie.NewSDFFilter("", "", "", "", 1))
+			}
 		}
 
 		pdr := createFunc(
@@ -194,3 +200,4 @@ func (b *pdrBuilder) BuildPDR() *ie.IE {
 
 	return pdr
 }
+

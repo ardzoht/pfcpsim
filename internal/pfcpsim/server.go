@@ -136,6 +136,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 	}
 
 	teidAlloc := request.TeidAllocFlag
+	bidirectionalSDF := request.BidirectionalSDFFlag
 
 	lastUEAddr, _, err := net.ParseCIDR(request.UeAddressPool)
 	if err != nil {
@@ -203,7 +204,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				AddQERID(sessQerID).
 				AddQERID(uplinkAppQerID).
 				WithN3Address(upfN3Address).
-				WithSDFFilter(SDFFilter).
+				WithSDFFilter(SDFFilter, bidirectionalSDF).
 				WithPrecedence(precedence).
 				WithTeidAlloc(teidAlloc).
 				MarkAsUplink().
@@ -214,7 +215,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithMethod(session.Create).
 				WithPrecedence(precedence).
 				WithUEAddress(ueAddress.String()).
-				WithSDFFilter(SDFFilter).
+				WithSDFFilter(SDFFilter, bidirectionalSDF).
 				AddQERID(sessQerID).
 				AddQERID(downlinkAppQerID).
 				WithFARID(downlinkFarID).
@@ -403,3 +404,4 @@ func (P pfcpSimService) DeleteSession(ctx context.Context, request *pb.DeleteSes
 		Message:    infoMsg,
 	}, nil
 }
+

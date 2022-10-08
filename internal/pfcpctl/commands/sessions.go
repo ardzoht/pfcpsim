@@ -12,15 +12,16 @@ import (
 )
 
 type commonArgs struct {
-	Count           int      `short:"c" long:"count" default:"1" description:"The number of sessions to create"`
-	BaseID          int      `short:"i" long:"baseID"  default:"1" description:"The base ID to use"`
-	UePool          string   `short:"u" long:"ue-pool" default:"17.0.0.0/24" description:"The UE pool address"`
-	GnBAddress      string   `short:"g" long:"gnb-addr" description:"The UE pool address"`
-	AppFilterString []string `short:"a" long:"app-filter" default:"ip:any:any:allow:100" description:"Specify an application filter. Format: '{ip | udp | tcp}:{IPv4 Prefix | any}:{<lower-L4-port>-<upper-L4-port> | any}:{allow | deny}:{rule-precedence}' . e.g. 'udp:10.0.0.0/8:80-88:allow:100'"`
-	QFI             uint8    `short:"q" long:"qfi" description:"The QFI value for QERs. Max value 64."`
-	UlTunnelDstIP   string   `short:"l" long:"uplink-tunnel-dst-ip" description:"Uplink tunnel destination IPv4 address"`
-	DlTunnelDstIP   string   `short:"d" long:"downlink-tunnel-dst-ip" description:"Downlink tunnel destination IPv4 address"`
-	TeidAllocFlag   bool     `short:"t" long:"teid-alloc" description:"If set, ask UP for teid allocation on PDRsd"`
+	Count                int      `short:"c" long:"count" default:"1" description:"The number of sessions to create"`
+	BaseID               int      `short:"i" long:"baseID"  default:"1" description:"The base ID to use"`
+	UePool               string   `short:"u" long:"ue-pool" default:"17.0.0.0/24" description:"The UE pool address"`
+	GnBAddress           string   `short:"g" long:"gnb-addr" description:"The UE pool address"`
+	AppFilterString      []string `short:"a" long:"app-filter" default:"ip:any:any:allow:100" description:"Specify an application filter. Format: '{ip | udp | tcp}:{IPv4 Prefix | any}:{<lower-L4-port>-<upper-L4-port> | any}:{allow | deny}:{rule-precedence}' . e.g. 'udp:10.0.0.0/8:80-88:allow:100'"`
+	QFI                  uint8    `short:"q" long:"qfi" description:"The QFI value for QERs. Max value 64."`
+	UlTunnelDstIP        string   `short:"l" long:"uplink-tunnel-dst-ip" description:"Uplink tunnel destination IPv4 address"`
+	DlTunnelDstIP        string   `short:"d" long:"downlink-tunnel-dst-ip" description:"Downlink tunnel destination IPv4 address"`
+	TeidAllocFlag        bool     `short:"t" long:"teid-alloc" description:"If set, ask UP for teid allocation on PDRs"`
+	BidirectionalSDFFlag bool     `short:"s" long:"bid" description:"If set, send bidirectional SDF filter on session creation"`
 }
 
 func (a *commonArgs) validate() {
@@ -75,15 +76,16 @@ func (s *sessionCreate) Execute(args []string) error {
 	s.Args.validate()
 
 	res, err := client.CreateSession(context.Background(), &pb.CreateSessionRequest{
-		Count:         int32(s.Args.Count),
-		BaseID:        int32(s.Args.BaseID),
-		NodeBAddress:  s.Args.GnBAddress,
-		UeAddressPool: s.Args.UePool,
-		AppFilters:    s.Args.AppFilterString,
-		Qfi:           int32(s.Args.QFI),
-		UlTunnelDstIP: s.Args.UlTunnelDstIP,
-		DlTunnelDstIP: s.Args.DlTunnelDstIP,
-		TeidAllocFlag: s.Args.TeidAllocFlag,
+		Count:                int32(s.Args.Count),
+		BaseID:               int32(s.Args.BaseID),
+		NodeBAddress:         s.Args.GnBAddress,
+		UeAddressPool:        s.Args.UePool,
+		AppFilters:           s.Args.AppFilterString,
+		Qfi:                  int32(s.Args.QFI),
+		UlTunnelDstIP:        s.Args.UlTunnelDstIP,
+		DlTunnelDstIP:        s.Args.DlTunnelDstIP,
+		TeidAllocFlag:        s.Args.TeidAllocFlag,
+		BidirectionalSDFFlag: s.Args.BidirectionalSDFFlag,
 	})
 
 	if err != nil {
@@ -139,3 +141,4 @@ func (s *sessionDelete) Execute(args []string) error {
 
 	return nil
 }
+
