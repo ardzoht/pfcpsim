@@ -164,16 +164,19 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 
 		sessQerID := uint32(0)
 
-		var pdrs, fars []*ieLib.IE
+		var pdrs, fars, qers []*ieLib.IE
 
-		qers := []*ieLib.IE{
-			// session QER
-			session.NewQERBuilder().
-				WithID(sessQerID).
-				WithMethod(session.Create).
-				WithUplinkMBR(60000).
-				WithDownlinkMBR(60000).
-				Build(),
+		if (request.UlAmbr != 0) || (request.DlAmbr != 0) {
+			sessQerID = 1
+			qers = []*ieLib.IE{
+				// session QER
+				session.NewQERBuilder().
+					WithID(sessQerID).
+					WithMethod(session.Create).
+					WithUplinkMBR(uint64(request.UlAmbr)).
+					WithDownlinkMBR(uint64(request.DlAmbr)).
+					Build(),
+			}
 		}
 
 		// create as many PDRs, FARs and App QERs as the number of app filters provided through pfcpctl
@@ -250,8 +253,6 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithID(uplinkAppQerID).
 				WithMethod(session.Create).
 				WithQFI(qfi).
-				WithUplinkMBR(50000).
-				WithDownlinkMBR(30000).
 				WithGateStatus(gateStatus).
 				Build()
 
@@ -259,8 +260,6 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithID(downlinkAppQerID).
 				WithMethod(session.Create).
 				WithQFI(qfi).
-				WithUplinkMBR(50000).
-				WithDownlinkMBR(30000).
 				WithGateStatus(gateStatus).
 				Build()
 
@@ -277,7 +276,8 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 		insertSession(i, sess)
 	}
 
-	infoMsg := fmt.Sprintf("%v sessions were established using %v as baseID ", count, baseID)
+	infoMsg := fmt.Sprintf("%v sessions were established using %v as baseID, UlAmbr %v DlAmbr %v, Qfi %v ",
+		count, baseID, request.UlAmbr, request.DlAmbr, request.Qfi)
 	log.Info(infoMsg)
 
 	return &pb.Response{
@@ -318,13 +318,28 @@ func (P pfcpSimService) ModifySession(ctx context.Context, request *pb.ModifySes
 	}
 
 	for i := baseID; i < (count*SessionStep + baseID); i = i + SessionStep {
-		var newFARs []*ieLib.IE
+		var newFARs, qers []*ieLib.IE
 
 		ID := uint32(i + 1)
 		teid := uint32(i + 1)
 
 		if request.BufferFlag || request.NotifyCPFlag {
 			teid = 0 // When buffering, TEID = 0.
+		}
+
+		sessQerID := uint32(0)
+
+		if (request.UlAmbr != 0) || (request.DlAmbr != 0) {
+			sessQerID = 1
+			qers = []*ieLib.IE{
+				// session QER
+				session.NewQERBuilder().
+					WithID(sessQerID).
+					WithMethod(session.Update).
+					WithUplinkMBR(uint64(request.UlAmbr)).
+					WithDownlinkMBR(uint64(request.DlAmbr)).
+					Build(),
+			}
 		}
 
 		for range request.AppFilters {
@@ -350,13 +365,14 @@ func (P pfcpSimService) ModifySession(ctx context.Context, request *pb.ModifySes
 			return &pb.Response{}, status.Error(codes.Internal, errMsg)
 		}
 
-		err := sim.ModifySession(sess, nil, newFARs, nil)
+		err := sim.ModifySession(sess, nil, newFARs, qers)
 		if err != nil {
 			return &pb.Response{}, status.Error(codes.Internal, err.Error())
 		}
 	}
 
-	infoMsg := fmt.Sprintf("%v sessions were modified", count)
+	infoMsg := fmt.Sprintf("%v sessions were modified using %v as baseID, UlAmbr %v DlAmbr %v",
+		count, baseID, request.UlAmbr, request.DlAmbr)
 	log.Info(infoMsg)
 
 	return &pb.Response{

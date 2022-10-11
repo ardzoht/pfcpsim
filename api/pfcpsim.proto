@@ -18,7 +18,9 @@ message CreateSessionRequest {
   string ulTunnelDstIP = 7;
   string dlTunnelDstIP = 8;
   bool teidAllocFlag = 9;
-  bool bidirectionalSDFFlag = 10;
+  int32 ulAmbr = 10;
+  int32 dlAmbr = 11;
+  bool bidirectionalSDFFlag = 12;
 }
 
 message ModifySessionRequest {
@@ -34,6 +36,8 @@ message ModifySessionRequest {
   bool endMarkerFlag = 8;
   string ulTunnelDstIP = 9;
   string dlTunnelDstIP = 10;
+  int32 ulAmbr = 11;
+  int32 dlAmbr = 12;
 }
 
 message ConfigureRequest {

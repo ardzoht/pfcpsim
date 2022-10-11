@@ -20,7 +20,9 @@ type commonArgs struct {
 	QFI                  uint8    `short:"q" long:"qfi" description:"The QFI value for QERs. Max value 64."`
 	UlTunnelDstIP        string   `short:"l" long:"uplink-tunnel-dst-ip" description:"Uplink tunnel destination IPv4 address"`
 	DlTunnelDstIP        string   `short:"d" long:"downlink-tunnel-dst-ip" description:"Downlink tunnel destination IPv4 address"`
-	TeidAllocFlag        bool     `short:"t" long:"teid-alloc" description:"If set, ask UP for teid allocation on PDRs"`
+	TeidAllocFlag        bool     `short:"t" long:"teid-alloc" description:"If set, ask UP for teid allocation on PDRsd"`
+	UlAmbr               int32    `short:"x" long:"ul-ambr" description:"The UL Session Ambr value for QERs in kbps"`
+	DlAmbr               int32    `short:"y" long:"dl-ambr" description:"The DL Session Ambr value for QERs in kbps"`
 	BidirectionalSDFFlag bool     `short:"s" long:"bid" description:"If set, send bidirectional SDF filter on session creation"`
 }
 
@@ -75,6 +77,7 @@ func (s *sessionCreate) Execute(args []string) error {
 
 	s.Args.validate()
 
+	log.Infof("s.Args.UlAmbr:%v, s.Args.DlAmbr:%v", int32(s.Args.UlAmbr), int32(s.Args.DlAmbr))
 	res, err := client.CreateSession(context.Background(), &pb.CreateSessionRequest{
 		Count:                int32(s.Args.Count),
 		BaseID:               int32(s.Args.BaseID),
@@ -85,6 +88,8 @@ func (s *sessionCreate) Execute(args []string) error {
 		UlTunnelDstIP:        s.Args.UlTunnelDstIP,
 		DlTunnelDstIP:        s.Args.DlTunnelDstIP,
 		TeidAllocFlag:        s.Args.TeidAllocFlag,
+		UlAmbr:               s.Args.UlAmbr,
+		DlAmbr:               s.Args.DlAmbr,
 		BidirectionalSDFFlag: s.Args.BidirectionalSDFFlag,
 	})
 
@@ -112,6 +117,8 @@ func (s *sessionModify) Execute(args []string) error {
 		NotifyCPFlag:  s.Args.NotifyCPFlag,
 		AppFilters:    s.Args.AppFilterString,
 		EndMarkerFlag: s.Args.EndMarkerFlag,
+		UlAmbr:        s.Args.UlAmbr,
+		DlAmbr:        s.Args.DlAmbr,
 	})
 
 	if err != nil {
