@@ -163,7 +163,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 
 		sessQerID := uint32(0)
 
-		var pdrs, fars []*ieLib.IE
+		var pdrs, fars, urrs []*ieLib.IE
 
 		qers := []*ieLib.IE{
 			// session QER
@@ -175,7 +175,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				Build(),
 		}
 
-		// create as many PDRs, FARs and App QERs as the number of app filters provided through pfcpctl
+		// create as many PDRs, FARs, App QERs and URRs as the number of app filters provided through pfcpctl
 		ID := uint16(i)
 
 		for _, appFilter := range request.AppFilters {
@@ -194,6 +194,9 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 
 			uplinkAppQerID := uint32(ID)
 			downlinkAppQerID := uint32(ID + 1)
+
+			uplinkUrrID := uint32(ID)
+			downlinkUrrID := uint32(ID + 1)
 
 			uplinkPDR := session.NewPDRBuilder().
 				WithID(uplinkPdrID).
@@ -266,10 +269,48 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 			qers = append(qers, uplinkAppQER)
 			qers = append(qers, downlinkAppQER)
 
+			// TODO - for now hardcode some values
+			uplinkURR := session.NewURRBuilder().
+				WithID(uplinkUrrID).
+				WithMethod(session.Create).
+				WithMeasurementMethodEvent(0).
+				WithMeasurementMethodVolume(1).
+				WithMeasurementMethodDuration(1).
+				WithTriggers(0x01).
+				WithVolThresholdFlags(0x07).
+				WithVolThresholdTotalVol(10_000_000).
+				WithVolThresholdUplinkVol(5_000_000).
+				WithVolThresholdDownlinkVol(5_000_000).
+				WithVolQuotaFlags(0x07).
+				WithVolQuotaTotalVol(50_000_000).
+				WithVolQuotaUplinkVol(10_000_000).
+				WithVolQuotaDownlinkVol(40_000_000).
+				Build()
+
+			downlinkURR := session.NewURRBuilder().
+				WithID(downlinkUrrID).
+				WithMethod(session.Create).
+				WithMeasurementMethodEvent(0).
+				WithMeasurementMethodVolume(1).
+				WithMeasurementMethodDuration(1).
+				WithTriggers(0x01).
+				WithVolThresholdFlags(0x07).
+				WithVolThresholdTotalVol(10_000_000).
+				WithVolThresholdUplinkVol(5_000_000).
+				WithVolThresholdDownlinkVol(5_000_000).
+				WithVolQuotaFlags(0x07).
+				WithVolQuotaTotalVol(50_000_000).
+				WithVolQuotaUplinkVol(10_000_000).
+				WithVolQuotaDownlinkVol(40_000_000).
+				Build()
+
+			urrs = append(urrs, uplinkURR)
+			urrs = append(urrs, downlinkURR)
+
 			ID += 2
 		}
 
-		sess, err := sim.EstablishSession(pdrs, fars, qers)
+		sess, err := sim.EstablishSession(pdrs, fars, qers, urrs)
 		if err != nil {
 			return &pb.Response{}, status.Error(codes.Internal, err.Error())
 		}
@@ -349,7 +390,7 @@ func (P pfcpSimService) ModifySession(ctx context.Context, request *pb.ModifySes
 			return &pb.Response{}, status.Error(codes.Internal, errMsg)
 		}
 
-		err := sim.ModifySession(sess, nil, newFARs, nil)
+		err := sim.ModifySession(sess, nil, newFARs, nil, nil)
 		if err != nil {
 			return &pb.Response{}, status.Error(codes.Internal, err.Error())
 		}
