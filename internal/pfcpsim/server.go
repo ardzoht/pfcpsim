@@ -167,7 +167,7 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 		var pdrs, fars, qers []*ieLib.IE
 
 		if (request.UlAmbr != 0) || (request.DlAmbr != 0) {
-			sessQerID = 1
+			sessQerID = 100
 			qers = []*ieLib.IE{
 				// session QER
 				session.NewQERBuilder().
@@ -253,6 +253,8 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithID(uplinkAppQerID).
 				WithMethod(session.Create).
 				WithQFI(qfi).
+				WithUplinkMBR(uint64(request.UlAmbr)).
+				WithDownlinkMBR(uint64(request.DlAmbr)).
 				WithGateStatus(gateStatus).
 				Build()
 
@@ -260,6 +262,8 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithID(downlinkAppQerID).
 				WithMethod(session.Create).
 				WithQFI(qfi).
+				WithUplinkMBR(uint64(request.UlAmbr)).
+				WithDownlinkMBR(uint64(request.DlAmbr)).
 				WithGateStatus(gateStatus).
 				Build()
 
