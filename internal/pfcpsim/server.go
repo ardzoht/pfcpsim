@@ -253,8 +253,6 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithID(uplinkAppQerID).
 				WithMethod(session.Create).
 				WithQFI(qfi).
-				WithUplinkMBR(uint64(request.UlAmbr)).
-				WithDownlinkMBR(uint64(request.DlAmbr)).
 				WithGateStatus(gateStatus).
 				Build()
 
@@ -262,8 +260,6 @@ func (P pfcpSimService) CreateSession(ctx context.Context, request *pb.CreateSes
 				WithID(downlinkAppQerID).
 				WithMethod(session.Create).
 				WithQFI(qfi).
-				WithUplinkMBR(uint64(request.UlAmbr)).
-				WithDownlinkMBR(uint64(request.DlAmbr)).
 				WithGateStatus(gateStatus).
 				Build()
 
